@@ -49,8 +49,6 @@ jobs:
     working_directory: ~/project/android
     docker:
       - image: circleci/android:api-29-node
-    environment:
-      FL_OUTPUT_DIR: output
     steps:
       - checkout:
           path: ~/project
@@ -73,7 +71,7 @@ jobs:
           command: |
             bundle exec fastlane assemble_release
       - store_artifacts:
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release
 
 workflows:
   node-android-ios:
