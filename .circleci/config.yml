@@ -45,7 +45,7 @@ jobs:
       - store_artifacts:
           path: test-results
             
-  android-build-and-test:
+  android-build:
     working_directory: ~/project/android
     docker:
       - image: circleci/android:api-29-node
@@ -72,16 +72,13 @@ jobs:
           name: fastlane build
           command: |
             bundle exec fastlane assemble_release
-      - store_test_results:
-          path: output/scan
-
       - store_artifacts:
-          path: output
+          path: android/app/build/outputs/apk/release/app-release.apk
 
 workflows:
   node-android-ios:
     jobs:
       - node
-      - android-build-and-test:
+      - android-build:
           requires:
             - node
