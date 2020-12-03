@@ -33,7 +33,6 @@ jobs:
           name: Run Fastlane
 orbs:
   rn: react-native-community/react-native@4.4.2
-version: 2.1
 workflows:
   test:
     jobs:
