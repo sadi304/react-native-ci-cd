@@ -21,6 +21,11 @@ platform :android do
     gradle(task: "test")
   end
 
+  desc "Generate release apk"
+  lane :assemble_release do
+    gradle(task: "assemble", build_type: 'Release')
+  end
+
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     gradle(task: "clean assembleRelease")
