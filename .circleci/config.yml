@@ -46,6 +46,11 @@ jobs:
 
       - store_artifacts:
           path: test-results
+
+      # - run: 
+      #     name: Source bash env
+      #     command: |
+      #       export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
       - slack/notify:
           event: always
           custom: |
@@ -55,14 +60,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "JS build passed ✅"
+                    "text": "JS build passed ✅. ${CIRCLE_BRANCH}"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Generating an staging apk. Hold on :pray:"
+                    "text": "Generating an staging apk :hourglass_flowing_sand:. Might take 2-3 minutes. Hold on :pray:"
                   }
                 }
               ]
@@ -134,6 +139,11 @@ jobs:
                 },
               ]
             }
+            
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+    
       - run:
           name: Upload to Slack
           command: |
