@@ -4,13 +4,16 @@ orbs:
 jobs:
   node:
     working_directory: ~/project
-    environment:
-      GIT_COMMIT_MSG: git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g'
     docker:
       - image: cimg/node:12.16
 
     steps:
       - checkout
+
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo "export GIT_COMMIT_MSG=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')" >> $BASH_ENV
 
       - restore_cache:
           key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
@@ -128,8 +131,6 @@ jobs:
             
   android-build:
     working_directory: ~/project/android
-    environment:
-      GIT_COMMIT_MSG: git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g'
     docker:
       - image: circleci/android:api-29-node
     steps:
