@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Setup Environment Variables
           command: |
-            echo "export GIT_COMMIT_MSG=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')" >> $BASH_ENV
+            echo "export COMMIT_MESSAGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> $BASH_ENV
 
       - restore_cache:
           key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
@@ -52,10 +52,6 @@ jobs:
       - store_artifacts:
           path: test-results
 
-      # - run: 
-      #     name: Source bash env
-      #     command: |
-      #       export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
       - slack/notify:
           event: always
           custom: |
@@ -72,33 +68,19 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "✅ JS build passed. Uploading an apk. Hold on for 2-3 minutes :pray:"
+                    "text": "*JS build* ✅✅. Uploading an apk. Hold on for 2-3 minutes :rocket::rocket:"
                   }
                 },
                 {
                   "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "\n"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
+                  "fields": [
                     {
-                      "type": "plain_text",
-                      "text": "Branch: ${CIRCLE_BRANCH}",
-                      "emoji": true
-                    }
-                  ]
-                },
-                {
-                  "type": "context",
-                  "elements": [
+                      "type": "mrkdwn",
+                      "text": "*Branch* \n ${CIRCLE_BRANCH}"
+                    },
                     {
-                      "type": "plain_text",
-                      "text": "Commit: ${GIT_COMMIT_MSG}",
-                      "emoji": true
+                      "type": "mrkdwn",
+                      "text": "*Commit* \n ${COMMIT_MESSAGE}"
                     }
                   ]
                 }
@@ -137,6 +119,11 @@ jobs:
       - checkout:
           path: ~/project
 
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo "export COMMIT_MESSAGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> $BASH_ENV
+            
       - attach_workspace:
           at: ~/project
 
@@ -173,33 +160,19 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":x: Android build failed!"
+                    "text": ":interrobang: Build failed."
                   }
                 },
                 {
                   "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "\n"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
+                  "fields": [
                     {
-                      "type": "plain_text",
-                      "text": "Branch: ${CIRCLE_BRANCH}",
-                      "emoji": true
-                    }
-                  ]
-                },
-                {
-                  "type": "context",
-                  "elements": [
+                      "type": "mrkdwn",
+                      "text": "*Branch* \n ${CIRCLE_BRANCH}"
+                    },
                     {
-                      "type": "plain_text",
-                      "text": "Commit: ${GIT_COMMIT_MSG}",
-                      "emoji": true
+                      "type": "mrkdwn",
+                      "text": "*Commit* \n ${COMMIT_MESSAGE}"
                     }
                   ]
                 },
