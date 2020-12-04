@@ -4,6 +4,8 @@ orbs:
 jobs:
   node:
     working_directory: ~/project
+    environment:
+      GIT_COMMIT_MSG: git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g'
     docker:
       - image: cimg/node:12.16
 
@@ -60,7 +62,21 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
+                    "text": "\n"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
                     "text": "✅ JS build passed. Uploading an apk. Hold on for 2-3 minutes :pray:"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "\n"
                   }
                 },
                 {
@@ -68,12 +84,17 @@ jobs:
                   "elements": [
                     {
                       "type": "plain_text",
-                      "text": "Committer: ${CIRCLE_USERNAME}",
+                      "text": "Branch: ${CIRCLE_BRANCH}",
                       "emoji": true
-                    },
+                    }
+                  ]
+                },
+                {
+                  "type": "context",
+                  "elements": [
                     {
                       "type": "plain_text",
-                      "text": "Branch: ${CIRCLE_BRANCH}",
+                      "text": "Commit: ${GIT_COMMIT_MSG}",
                       "emoji": true
                     }
                   ]
@@ -107,6 +128,8 @@ jobs:
             
   android-build:
     working_directory: ~/project/android
+    environment:
+      GIT_COMMIT_MSG: git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g'
     docker:
       - image: circleci/android:api-29-node
     steps:
@@ -142,7 +165,21 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
+                    "text": "\n"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
                     "text": ":x: Android build failed!"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "\n"
                   }
                 },
                 {
@@ -150,12 +187,17 @@ jobs:
                   "elements": [
                     {
                       "type": "plain_text",
-                      "text": "Committer: ${CIRCLE_USERNAME}",
+                      "text": "Branch: ${CIRCLE_BRANCH}",
                       "emoji": true
-                    },
+                    }
+                  ]
+                },
+                {
+                  "type": "context",
+                  "elements": [
                     {
                       "type": "plain_text",
-                      "text": "Branch: ${CIRCLE_BRANCH}",
+                      "text": "Commit: ${GIT_COMMIT_MSG}",
                       "emoji": true
                     }
                   ]
@@ -167,12 +209,11 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "View Job",
-                        "emoji": true
+                        "text": "View Job"
                       },
                       "value": "click_me_123",
-                      "url": "${CIRCLE_BUILD_URL}",
-                      "action_id": "actionId-0"
+                      "style": "danger",
+                      "url": "${CIRCLE_BUILD_URL}"
                     }
                   ]
                 }
