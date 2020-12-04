@@ -123,7 +123,7 @@ jobs:
           name: Setup Environment Variables
           command: |
             echo "export COMMIT_MESSAGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> $BASH_ENV
-            
+
       - attach_workspace:
           at: ~/project
 
@@ -136,6 +136,10 @@ jobs:
           key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
           paths:
             - vendor/bundle
+
+      - run:
+          name: Decode Android key store
+          command: echo $APP_KEYSTORE | base64 -d | tee keystore app/keystore > /dev/null
 
       - run:
           name: building apk
