@@ -60,15 +60,23 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "JS build passed ✅. ${CIRCLE_BRANCH}"
+                    "text": "✅ JS build passed. Uploading an apk. Hold on for 2-3 minutes :pray:"
                   }
                 },
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Generating an staging apk :hourglass_flowing_sand:. Might take 2-3 minutes. Hold on :pray:"
-                  }
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "plain_text",
+                      "text": "Committer: ${CIRCLE_USERNAME}",
+                      "emoji": true
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "Branch: ${CIRCLE_BRANCH}",
+                      "emoji": true
+                    }
+                  ]
                 }
               ]
             }
@@ -124,9 +132,9 @@ jobs:
             bundle exec fastlane assemble_release
       - store_artifacts:
           path: app/build/outputs/apk/release
-
+            
       - slack/notify:
-          event: always
+          event: fail
           custom: |
             {
               "blocks": [
@@ -134,16 +142,43 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Build Successful."
+                    "text": ":x: Android build failed!"
                   }
                 },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "plain_text",
+                      "text": "Committer: ${CIRCLE_USERNAME}",
+                      "emoji": true
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "Branch: ${CIRCLE_BRANCH}",
+                      "emoji": true
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job",
+                        "emoji": true
+                      },
+                      "value": "click_me_123",
+                      "url": "${CIRCLE_BUILD_URL}",
+                      "action_id": "actionId-0"
+                    }
+                  ]
+                }
               ]
             }
-            
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-    
+                
       - run:
           name: Upload to Slack
           command: |
