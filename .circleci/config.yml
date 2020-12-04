@@ -46,17 +46,6 @@ jobs:
 
       - store_artifacts:
           path: test-results
-
-      - slack/notify:
-          color: '#a6d3de'
-          title: Circle CI - JS passed ✅
-          message: ESLint, Jest processes are completed.
-          include_job_number_field: false
-          include_project_field: false
-
-      - slack/status:
-          fail_only: true
-          mentions: 'Mystic'
       # - approval_notification:
       #     steps:
       #       - run:
@@ -111,12 +100,26 @@ jobs:
           path: app/build/outputs/apk/release
 
       - slack/notify:
-          color: '#a6d3de'
-          title: eLoan App ✅
-          message: Generating a staging apk, it will be uploaded shortly. 
-          include_job_number_field: false
-          include_project_field: false
-
+          event: always
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Build Successful. ✅✅"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Generating an eLoan staging apk. It will be uploaded shortly."
+                  }
+                }
+              ]
+            }
       - run:
           name: Upload to Slack
           command: |
@@ -124,7 +127,7 @@ jobs:
             curl -F file=@app/build/outputs/apk/release/app-release.apk -F channels=$SLACK_CHANNEL -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
 
 workflows:
-  node-android-ios:
+  node-android:
     jobs:
       - node
       - android-build:
