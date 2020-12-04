@@ -46,6 +46,27 @@ jobs:
 
       - store_artifacts:
           path: test-results
+      - slack/notify:
+          event: always
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "JS build passed ✅"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Generating an staging apk. Hold on :pray:"
+                  }
+                }
+              ]
+            }
       # - approval_notification:
       #     steps:
       #       - run:
@@ -108,23 +129,16 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Build Successful. ✅✅"
+                    "text": "Build Successful."
                   }
                 },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Generating an eLoan staging apk. It will be uploaded shortly."
-                  }
-                }
               ]
             }
       - run:
           name: Upload to Slack
           command: |
             export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
-            curl -F file=@app/build/outputs/apk/release/app-release.apk -F channels=$SLACK_CHANNEL -F token=$SLACK_ACCESS_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
+            curl -F file=@app/build/outputs/apk/release/app-release.apk -F channels=$SLACK_CHANNEL -F token=$SLACK_ACCESS_TOKEN -F title="${CIRCLE_BRANCH} | ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
 
 workflows:
   node-android:
